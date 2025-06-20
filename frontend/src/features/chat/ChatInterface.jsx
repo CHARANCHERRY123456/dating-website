@@ -155,7 +155,7 @@ const ChatInterface = () => {
   return (
     <Layout>
       <div className="max-w-4xl mx-auto px-4 py-4">
-        <div className="card overflow-hidden h-[calc(100vh-12rem)]">
+        <div className="card flex flex-col h-[calc(100vh-12rem)] overflow-hidden min-h-0">
           {/* Chat Header */}
           <div className="bg-white border-b border-gray-200 p-4">
             <div className="flex items-center justify-between">
@@ -190,7 +190,7 @@ const ChatInterface = () => {
           </div>
 
           {/* Messages Area */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
+          <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50 min-h-0">
             {messages.length === 0 ? (
               <div className="text-center py-8">
                 <div className="text-gray-400 mb-4">
