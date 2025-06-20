@@ -1,7 +1,7 @@
 module.exports = {
   JWT_SECRET: process.env.JWT_SECRET || 'your-super-secret-jwt-key-here',
   CLIENT_URL: process.env.CLIENT_URL || 'http://localhost:5173',
-  GEMINI_API_KEY: process.env.GEMINI_API_KEY || 'AIzaSyCtFgFI4s3S8x7hvI5U0nIFGWL0H7hOONM',
+  GEMINI_API_KEY: process.env.GEMINI_API_KEY,
   PORT: process.env.PORT || 3001,
   
   // App Constants
