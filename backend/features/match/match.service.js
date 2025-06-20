@@ -5,6 +5,8 @@ const { FREEZE_DURATION: FREEZE_TIME, NEW_MATCH_DELAY: MATCH_DELAY } = require('
 
 class MatchService {
   async createMatch(userId, matchedUserId) {
+    // Primary match for user
+    const createdAt = new Date();
     const matchData = {
       id: generateMatchId(),
       userId,
@@ -13,11 +15,29 @@ class MatchService {
       isPinned: true,
       messageCount: 0,
       videoCallUnlocked: false,
-      createdAt: new Date(),
-      updatedAt: new Date()
+      createdAt,
+      updatedAt: createdAt
     };
 
-    return await matchRepository.create(matchData);
+    // Reciprocal match for the other user
+    const reciprocalData = {
+      id: generateMatchId(),
+      userId: matchedUserId,
+      matchedUserId: userId,
+      status: 'active',
+      isPinned: true,
+      messageCount: 0,
+      videoCallUnlocked: false,
+      createdAt,
+      updatedAt: createdAt
+    };
+
+    // Save both records in parallel
+    const [primaryMatch] = await Promise.all([
+      matchRepository.create(matchData),
+      matchRepository.create(reciprocalData)
+    ]);
+    return primaryMatch;
   }
 
   async getUserMatches(userId) {

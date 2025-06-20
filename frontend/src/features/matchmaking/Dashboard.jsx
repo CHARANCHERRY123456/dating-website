@@ -7,11 +7,12 @@ import MatchCard from './MatchCard';
 
 const Dashboard = () => {
   const { user } = useAuthStore();
-  const { activeMatch, fetchActiveMatch, isLoading, error } = useMatchStore();
+  const { activeMatch, matches, fetchActiveMatch, fetchMatches, isLoading, error } = useMatchStore();
 
   useEffect(() => {
     fetchActiveMatch();
-  }, [fetchActiveMatch]);
+    fetchMatches();
+  }, [fetchActiveMatch, fetchMatches]);
 
   if (isLoading) {
     return (
@@ -26,6 +27,23 @@ const Dashboard = () => {
   return (
     <Layout>
       <div className="max-w-4xl mx-auto px-4 py-8">
+        {/* List all chats */}
+        <div className="mb-8">
+          <h2 className="text-xl font-semibold text-gray-900 mb-4">Your Conversations</h2>
+          <ul className="space-y-2">
+            {matches.map(match => (
+              <li key={match.id}>
+                <a
+                  href="/chat"
+                  onClick={() => window.location.assign('/chat')}
+                  className="block p-4 rounded-lg bg-gray-100 hover:bg-gray-200"
+                >
+                  {match.matchedUser.name}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
             Welcome back, {user?.name}
