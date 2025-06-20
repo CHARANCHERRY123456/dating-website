@@ -21,11 +21,12 @@ const useChatStore = create((set, get) => ({
   },
 
   sendMessage: (matchId, receiverId, content, type = 'text') => {
-    socketService.sendMessage({
-      matchId,
-      receiverId,
-      content,
-      type
+    socketService.sendMessage({ matchId, receiverId, content, type }, (message) => {
+      if (message.error) {
+        console.error('Message send error:', message.error);
+      } else {
+        set(state => ({ messages: [...state.messages, message] }));
+      }
     });
   },
 

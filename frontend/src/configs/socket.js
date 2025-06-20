@@ -68,9 +68,12 @@ class SocketService {
     this.emit('joinMatch', matchId);
   }
 
-  sendMessage(data) {
-    console.log('[SocketService] emit sendMessage:', data);
-    this.emit('sendMessage', data);
+  // Update sendMessage to accept an ack callback
+  sendMessage(data, ack) {
+    console.log('[SocketService] emit sendMessage with ack:', data);
+    if (this.socket && this.isConnected) {
+      this.socket.emit('sendMessage', data, ack);
+    }
   }
 
   startTyping(data) {

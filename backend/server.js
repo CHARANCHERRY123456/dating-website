@@ -87,7 +87,7 @@ io.on('connection', (socket) => {
     console.log(`👥 User ${socket.userId} joined match ${matchId}`);
   });
 
-  socket.on('sendMessage', async (data) => {
+  socket.on('sendMessage', async (data, ack) => {
     try {
       const { matchId, receiverId, content, type = 'text' } = data;
       
@@ -101,6 +101,8 @@ io.on('connection', (socket) => {
 
       // Emit to all users in the match
       io.to(matchId).emit('newMessage', message);
+      // Send acknowledgment back to sender
+      if (typeof ack === 'function') ack(message);
       
       // Emit to specific receiver if they're online
       const receiverSocketId = connectedUsers.get(receiverId);
@@ -114,6 +116,8 @@ io.on('connection', (socket) => {
 
     } catch (error) {
       console.error('Error sending message:', error);
+      
+      if (typeof ack === 'function') ack({ error: error.message });
       socket.emit('messageError', { error: error.message });
     }
   });
