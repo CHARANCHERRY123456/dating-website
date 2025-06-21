@@ -39,10 +39,19 @@ class MatchController {
 
       // Convert document to plain object
       const match = matchDoc.toObject ? matchDoc.toObject() : matchDoc;
-      const matchedUser = await userService.getUserById(match.matchedUserId);
+      const [matchedUser, currentUser] = await Promise.all([
+        userService.getUserById(match.matchedUserId),
+        userService.getUserById(match.userId)
+      ]);
+
       res.json({
         match: {
           ...match,
+          user: {
+            interests: currentUser.interests,
+            location: currentUser.location,
+            coordinates: currentUser.coordinates
+          },
           matchedUser: {
             id: matchedUser.id,
             name: matchedUser.name,
@@ -51,8 +60,10 @@ class MatchController {
             avatar: matchedUser.avatar,
             interests: matchedUser.interests,
             location: matchedUser.location,
+            coordinates: matchedUser.coordinates,
             isOnline: matchedUser.isOnline
-          }
+          },
+          locationScore: match.compatibilityDetails?.locationScore || 0
         }
       });
     } catch (error) {
