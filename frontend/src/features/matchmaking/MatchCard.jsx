@@ -84,12 +84,12 @@ const MatchCard = ({ match }) => {
 
   return (
     <>
-      <div className="card overflow-hidden">
+      <div className="overflow-hidden bg-white rounded-xl shadow-card transition hover:shadow-card-hover hover:-translate-y-1 transform-gpu duration-300">
         <div className="relative">
           <img
             src={match.matchedUser.avatar}
             alt={match.matchedUser.name}
-            className="w-full h-64 object-cover"
+            className="w-full h-64 object-cover rounded-t-xl"
           />
           <div className="absolute top-4 right-4">
             {getStatusBadge()}
@@ -151,7 +151,7 @@ const MatchCard = ({ match }) => {
               <div className="flex space-x-3">
                 <button
                   onClick={() => window.location.href = '/chat'}
-                  className="flex-1 btn-primary"
+                  className="flex-1 bg-accent text-white font-medium py-3 rounded-lg hover:bg-accent/80 transition"
                 >
                   Start Conversation
                 </button>

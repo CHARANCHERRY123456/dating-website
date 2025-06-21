@@ -154,15 +154,15 @@ const ChatInterface = () => {
 
   return (
     <Layout>
-      <div className="max-w-4xl mx-auto px-4 py-4">
-        <div className="card flex flex-col h-[calc(100vh-12rem)] overflow-hidden min-h-0">
+      <div className="max-w-4xl mx-auto py-6">
+        <div className="flex flex-col bg-white rounded-xl shadow-card h-[calc(100vh-12rem)] overflow-hidden min-h-0">
           {/* Chat Header */}
-          <div className="bg-white border-b border-gray-200 p-4">
-            <div className="flex items-center justify-between">
+          <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+            <div className="flex items-center justify-between w-full">
               <div className="flex items-center space-x-3">
                 <button
                   onClick={() => navigate('/dashboard')}
-                  className="text-gray-400 hover:text-gray-600 transition-colors"
+                  className="text-gray-500 hover:text-gray-700 transition"
                 >
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -171,7 +171,7 @@ const ChatInterface = () => {
                 <img
                   src={activeMatch.matchedUser.avatar}
                   alt={activeMatch.matchedUser.name}
-                  className="w-10 h-10 rounded-full object-cover"
+                  className="w-10 h-10 rounded-full object-cover border border-gray-200"
                 />
                 <div>
                   <h3 className="font-semibold text-gray-900">{activeMatch.matchedUser.name}</h3>
@@ -182,7 +182,7 @@ const ChatInterface = () => {
               </div>
               
               {activeMatch.videoCallUnlocked && (
-                <button className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium hover:bg-green-200 transition-colors">
+                <button className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium hover:bg-green-200 transition">
                   📹 Video Call Available
                 </button>
               )}
@@ -190,7 +190,7 @@ const ChatInterface = () => {
           </div>
 
           {/* Messages Area */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50 min-h-0">
+          <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-light min-h-0">
             {messages.length === 0 ? (
               <div className="text-center py-8">
                 <div className="text-gray-400 mb-4">
@@ -222,20 +222,20 @@ const ChatInterface = () => {
           </div>
 
           {/* Message Input */}
-          <div className="bg-white border-t border-gray-200 p-4">
-            <form onSubmit={handleSendMessage} className="flex space-x-3">
+          <div className="px-6 py-4 border-t border-gray-200 bg-white">
+            <form onSubmit={handleSendMessage} className="flex space-x-3 items-end">
               <input
                 type="text"
                 value={messageInput}
                 onChange={handleInputChange}
                 placeholder="Type your message..."
-                className="flex-1 input-field"
+                className="flex-1 border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-accent focus:border-transparent"
                 maxLength={500}
               />
               <button
                 type="submit"
                 disabled={!messageInput.trim()}
-                className="btn-primary px-6 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="bg-accent text-white px-6 py-3 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-accent/80 transition"
               >
                 Send
               </button>

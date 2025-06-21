@@ -5,6 +5,10 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
+    container: {
+      center: true,
+      padding: '1rem',
+    },
     extend: {
       colors: {
         background: '#ffffff',
@@ -32,10 +36,16 @@ export default {
           700: '#0369a1',
           800: '#075985',
           900: '#0c4a6e',
-        }
+        },
+        accent: '#F472B6', // pink accent
+        light: '#F9FAFB', // light gray background
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
+      },
+      boxShadow: {
+        'card': '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+        'card-hover': '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
       },
       animation: {
         'fade-in': 'fadeIn 0.5s ease-in-out',
@@ -54,5 +64,7 @@ export default {
       }
     },
   },
-  plugins: [],
+  plugins: [
+    require('@tailwindcss/forms'),
+  ],
 }

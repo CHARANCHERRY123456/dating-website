@@ -13,6 +13,13 @@ const matchSchema = new mongoose.Schema({
   freezeUntil: { type: Date },
   messageCount: { type: Number, default: 0 },
   videoCallUnlocked: { type: Boolean, default: false },
+  compatibilityScore: { type: Number, required: true },
+  compatibilityDetails: {
+    interestScore: { type: Number },
+    personalityScore: { type: Number },
+    locationScore: { type: Number },
+    engagementScore: { type: Number }
+  },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }
 });

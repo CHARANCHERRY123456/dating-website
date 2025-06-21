@@ -1,12 +1,17 @@
 const matchRepository = require('./match.repository');
 const userService = require('../user/user.service');
-const { generateMatchId, FREEZE_DURATION, NEW_MATCH_DELAY } = require('../../shared/utils/helpers');
+const compatibilityService = require('./compatibility.service');
+const { generateMatchId } = require('../../shared/utils/helpers');
 const { FREEZE_DURATION: FREEZE_TIME, NEW_MATCH_DELAY: MATCH_DELAY } = require('../../shared/config/constants');
 
 class MatchService {
   async createMatch(userId, matchedUserId) {
-    // Primary match for user
     const createdAt = new Date();
+    // Get compatibility score for the match
+    const user = await userService.getUserById(userId);
+    const matchedUser = await userService.getUserById(matchedUserId);
+    const compatibilityScore = await compatibilityService.calculateCompatibilityScore(user, matchedUser);
+
     const matchData = {
       id: generateMatchId(),
       userId,
@@ -15,11 +20,12 @@ class MatchService {
       isPinned: true,
       messageCount: 0,
       videoCallUnlocked: false,
+      compatibilityScore,
       createdAt,
       updatedAt: createdAt
     };
 
-    // Reciprocal match for the other user
+    // Create reciprocal match with same compatibility score
     const reciprocalData = {
       id: generateMatchId(),
       userId: matchedUserId,
@@ -28,6 +34,7 @@ class MatchService {
       isPinned: true,
       messageCount: 0,
       videoCallUnlocked: false,
+      compatibilityScore,
       createdAt,
       updatedAt: createdAt
     };
@@ -56,6 +63,16 @@ class MatchService {
 
     const freezeUntil = new Date(Date.now() + FREEZE_TIME);
     
+    // Update user's match history
+    await userService.updateMatchHistory(userId, {
+      matchId,
+      userId: match.matchedUserId,
+      duration: (Date.now() - new Date(match.createdAt).getTime()) / (1000 * 60 * 60 * 24),
+      messageCount: match.messageCount,
+      compatibility: match.compatibilityScore,
+      outcome: 'unmatched'
+    });
+
     await matchRepository.updateById(matchId, {
       status: 'frozen',
       isPinned: false,
@@ -63,29 +80,26 @@ class MatchService {
       updatedAt: new Date()
     });
 
-    // Schedule new match for the other user after 2 hours
+    // Schedule new match for the other user after delay
     setTimeout(async () => {
       await this.createNewMatchForUser(match.matchedUserId);
     }, MATCH_DELAY);
 
-    return { freezeUntil, message: 'Match unpinned. You are now in a 24-hour reflection phase.' };
+    return { 
+      freezeUntil, 
+      message: 'Match unpinned. You are now in a 24-hour reflection phase.' 
+    };
   }
 
   async createNewMatchForUser(userId) {
-    const users = await userService.getAllUsers();
-    const availableUsers = (await Promise.all(
-      users.map(async user => {
-        if (user.id !== userId && !(await this.getActiveMatch(user.id))) {
-          return user;
-        }
-        return null;
-      })
-    )).filter(Boolean);
-
-    if (availableUsers.length > 0) {
-      const randomUser = availableUsers[Math.floor(Math.random() * availableUsers.length)];
-      await this.createMatch(userId, randomUser.id);
+    // Find the best match using compatibility service
+    const bestMatch = await compatibilityService.findBestMatch(userId);
+    
+    if (bestMatch && bestMatch.score >= 0.5) {
+      return await this.createMatch(userId, bestMatch.match.id);
     }
+    
+    return null;
   }
 
   async incrementMessageCount(matchId) {
